@@ -7,18 +7,12 @@ import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDp6kczSuYHLEybmJEyASrQHLZqiyUHl-k",
-  authDomain: "all-projects-demo-auth.firebaseapp.com",
-  projectId: "all-projects-demo-auth",
-  storageBucket: "all-projects-demo-auth.firebasestorage.app",
-  messagingSenderId: "363126145417",
-  appId: "web:d305dbf8af5ae8d6c1a158",
-  // apiKey: import.meta.env.VITE_API_KEY,
-  // authDomain: import.meta.env.VITE_AUTH_DOMAIN,
-  // projectId: import.meta.env.VITE_PROJECT_ID,
-  // storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
-  // messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
-  // appId: import.meta.env.VITE_APP_ID,
+  apiKey: import.meta.env.VITE_FIREBASE_API,
+  authDomain: import.meta.env.VITE_FIREBASE,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 // console.log("API Key:", import.meta.env.VITE_API_KEY);
