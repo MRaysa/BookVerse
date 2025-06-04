@@ -14,6 +14,8 @@ import {
 import { useNavigate, Link } from "react-router";
 import { AuthContext } from "../contexts/AuthContext";
 import Swal from "sweetalert2";
+import Lottie from "lottie-react";
+import signUpLottie from "../assets/lotties/signup.json";
 
 const SignUp = () => {
   const { createUser, googleSignIn, updateUser, loading } =

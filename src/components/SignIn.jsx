@@ -19,6 +19,8 @@ import {
   sendPasswordResetEmail,
 } from "firebase/auth";
 import { auth } from "../firebase/firebase.init";
+import signInLottie from "../assets/lotties/signin.json";
+import Lottie from "lottie-react";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");

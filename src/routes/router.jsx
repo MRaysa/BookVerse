@@ -4,6 +4,10 @@ import ErrorPage from "../pages/ErrorPage";
 import HomePage from "../pages/HomePage";
 import SignIn from "../components/SignIn";
 import SignUp from "../components/SignUp";
+import AllBooksPage from "../pages/AllBooksPage";
+import AddBookPage from "../pages/AddBookPage";
+import BorrowedPage from "../pages/BorrowedPage";
+import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +26,30 @@ const router = createBrowserRouter([
       {
         path: "/signup",
         Component: SignUp,
+      },
+      {
+        path: "/all-books",
+        element: (
+          <PrivateRoute>
+            <AllBooksPage />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/add-book",
+        element: (
+          <PrivateRoute>
+            <AddBookPage />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/borrowed-books",
+        element: (
+          <PrivateRoute>
+            <BorrowedPage />
+          </PrivateRoute>
+        ),
       },
     ],
   },
