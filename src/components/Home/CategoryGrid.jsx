@@ -6,6 +6,13 @@ import {
   FaFlask,
   FaTheaterMasks,
   FaHeartbeat,
+  FaUserSecret,
+  FaFilm,
+  FaRobot,
+  FaFeatherAlt,
+  FaHatWizard,
+  FaBrain,
+  FaPlaneDeparture,
 } from "react-icons/fa";
 import { useTheme } from "../../contexts/ThemeContext";
 
@@ -14,6 +21,14 @@ const categories = [
   { name: "Science", icon: <FaFlask />, color: "text-blue-500" },
   { name: "History", icon: <FaHistory />, color: "text-amber-500" },
   { name: "Health", icon: <FaHeartbeat />, color: "text-red-500" },
+  { name: "Novel", icon: <FaBook />, color: "text-indigo-500" },
+  { name: "Thriller", icon: <FaUserSecret />, color: "text-gray-700" },
+  { name: "Drama", icon: <FaFilm />, color: "text-pink-500" },
+  { name: "Sci-Fi", icon: <FaRobot />, color: "text-green-500" },
+  { name: "Biography", icon: <FaFeatherAlt />, color: "text-yellow-600" },
+  { name: "Fantasy", icon: <FaHatWizard />, color: "text-fuchsia-600" },
+  { name: "Psychology", icon: <FaBrain />, color: "text-cyan-600" },
+  { name: "Travel", icon: <FaPlaneDeparture />, color: "text-orange-500" },
 ];
 
 const CategoryGrid = () => {
