@@ -10,6 +10,7 @@ import BorrowedPage from "../pages/BorrowedPage";
 import PrivateRoute from "./PrivateRoute";
 import BookDetailsPage from "../pages/BookDetailsPage";
 import BooksPage from "../pages/BooksPage";
+import BooksCategory from "../components/Home/BooksCategory";
 
 const router = createBrowserRouter([
   {
@@ -58,6 +59,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <BookDetailsPage />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/books-category/:id",
+        element: (
+          <PrivateRoute>
+            <BooksCategory />
           </PrivateRoute>
         ),
       },
