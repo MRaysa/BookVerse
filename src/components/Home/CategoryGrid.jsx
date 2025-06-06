@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router";
 import {
   FaBook,
   FaHistory,
@@ -33,7 +34,11 @@ const categories = [
 
 const CategoryGrid = () => {
   const { theme } = useTheme();
+  const navigate = useNavigate();
 
+  const handleCategoryClick = (categoryName) => {
+    navigate(`/books?category=${encodeURIComponent(categoryName)}`);
+  };
   return (
     <section
       className={`py-12 px-4 ${
@@ -61,6 +66,7 @@ const CategoryGrid = () => {
             <motion.div
               key={category.name}
               initial={{ opacity: 0, scale: 0.8 }}
+              onClick={() => handleCategoryClick(category.name)}
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true, margin: "-50px" }}

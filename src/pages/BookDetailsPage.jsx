@@ -1,27 +1,31 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { useParams, useNavigate } from "react-router";
-import axios from "../api";
-import { useAuth } from "../contexts/AuthContext";
-import { toast } from "react-hot-toast";
+import { motion } from "framer-motion";
+import axios from "axios";
+import { AuthContext } from "../contexts/AuthContext";
 import BorrowModal from "../components/BorrowModal";
+import { useTheme } from "../contexts/ThemeContext";
+import { toast } from "react-hot-toast";
 
 const BookDetailsPage = () => {
   const { id } = useParams();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { currentUser } = useAuth();
+  const [showModal, setShowModal] = useState(false);
+
+  const { user } = use(AuthContext);
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   useEffect(() => {
     const fetchBook = async () => {
       try {
+        setLoading(true);
         const response = await axios.get(`/api/books/${id}`);
         setBook(response.data.data);
       } catch (error) {
-        toast.error("Failed to fetch book details");
         console.error("Error fetching book:", error);
-        navigate("/all-books");
+        navigate("/books");
       } finally {
         setLoading(false);
       }
@@ -32,87 +36,141 @@ const BookDetailsPage = () => {
 
   const handleBorrow = async (returnDate) => {
     try {
-      await axios.post("/api/borrow", {
-        bookId: id,
-        returnDate,
-      });
+      const token = await user.getIdToken();
+      await axios.post(
+        "/api/borrow",
+        {
+          bookId: book._id,
+          returnDate,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setBook((prev) => ({ ...prev, quantity: prev.quantity - 1 }));
+      setShowModal(false);
       toast.success("Book borrowed successfully!");
-      // Refresh book data
-      const response = await axios.get(`/api/books/${id}`);
-      setBook(response.data.data);
     } catch (error) {
+      console.error("Error borrowing book:", error);
       toast.error(error.response?.data?.message || "Failed to borrow book");
     }
   };
 
-  if (loading) {
-    return <div className="text-center py-8">Loading book details...</div>;
-  }
-
-  if (!book) {
-    return <div className="text-center py-8">Book not found</div>;
+  if (loading || !book) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="md:flex">
-          <div className="md:w-1/3 p-6">
-            <img
-              src={book.image || "/default-book-cover.jpg"}
-              alt={book.name}
-              className="w-full h-auto rounded-md"
-            />
-          </div>
-          <div className="md:w-2/3 p-6">
-            <h1 className="text-3xl font-bold mb-2">{book.name}</h1>
-            <p className="text-xl text-gray-600 mb-4">by {book.author}</p>
+    <section
+      className={`py-12 px-4 ${
+        theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+      }`}
+    >
+      <div className="max-w-4xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8"
+        >
+          <button
+            onClick={() => navigate(-1)}
+            className={`flex items-center ${
+              theme === "dark" ? "text-purple-400" : "text-purple-600"
+            }`}
+          >
+            ← Back to books
+          </button>
+        </motion.div>
 
-            <div className="flex items-center mb-4">
-              <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold mr-3">
-                {book.category}
-              </span>
-              <div className="flex items-center">
-                <span className="text-yellow-500 mr-1">★</span>
-                <span>{book.rating || "Not rated"}</span>
-              </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className={`rounded-xl overflow-hidden shadow-lg ${
+            theme === "dark" ? "bg-gray-800" : "bg-white"
+          }`}
+        >
+          <div className="md:flex">
+            <div className="md:w-1/3">
+              <img
+                src={book.image}
+                alt={book.name}
+                className="w-full h-full object-cover"
+              />
             </div>
+            <div className="p-6 md:w-2/3">
+              <h2 className="text-2xl font-bold mb-2">{book.name}</h2>
+              <p className="text-lg mb-4">by {book.author}</p>
 
-            <p className="text-gray-700 mb-6">{book.description}</p>
+              <div className="flex items-center mb-4">
+                <span
+                  className={`px-3 py-1 rounded-full text-sm ${
+                    theme === "dark" ? "bg-gray-700" : "bg-gray-200"
+                  }`}
+                >
+                  {book.category}
+                </span>
+                <span
+                  className={`ml-4 ${
+                    book.quantity > 0 ? "text-green-500" : "text-red-500"
+                  }`}
+                >
+                  {book.quantity > 0
+                    ? `${book.quantity} available`
+                    : "Out of stock"}
+                </span>
+              </div>
 
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-lg font-semibold">
-                  Available:{" "}
-                  <span className="text-blue-600">{book.quantity}</span>
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-2">Description</h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  {book.description || "No description available."}
                 </p>
               </div>
 
-              {currentUser && (
+              {user && (
                 <button
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={() => setShowModal(true)}
                   disabled={book.quantity <= 0}
-                  className={`px-4 py-2 rounded-md ${
-                    book.quantity > 0
-                      ? "bg-green-600 hover:bg-green-700 text-white"
-                      : "bg-gray-300 text-gray-600 cursor-not-allowed"
-                  }`}
+                  className={`px-6 py-2 rounded-md ${
+                    book.quantity <= 0
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : theme === "dark"
+                      ? "bg-purple-600 hover:bg-purple-700"
+                      : "bg-purple-500 hover:bg-purple-600"
+                  } text-white transition-colors`}
                 >
-                  {book.quantity > 0 ? "Borrow Book" : "Out of Stock"}
+                  Borrow Book
                 </button>
+              )}
+
+              {!user && (
+                <p className="text-gray-500">
+                  Please login to borrow this book
+                </p>
               )}
             </div>
           </div>
-        </div>
-      </div>
+        </motion.div>
 
-      <BorrowModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleBorrow}
-        user={currentUser}
-      />
-    </div>
+        {showModal && (
+          <BorrowModal
+            book={book}
+            user={user}
+            onClose={() => setShowModal(false)}
+            onBorrow={handleBorrow}
+          />
+        )}
+      </div>
+    </section>
   );
 };
 
