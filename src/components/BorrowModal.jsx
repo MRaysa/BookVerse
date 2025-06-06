@@ -36,52 +36,80 @@ const BorrowModal = ({ book, user, onClose, onBorrow }) => {
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          className={`absolute top-4 right-4 ${
+            theme === "dark"
+              ? "text-gray-300 hover:text-white"
+              : "text-gray-500 hover:text-gray-700"
+          }`}
         >
           ✕
         </button>
 
-        <h2 className="text-xl font-bold mb-4">Borrow {book.name}</h2>
+        <h2
+          className={`text-xl font-bold mb-4 ${
+            theme === "dark" ? "text-white" : "text-gray-800"
+          }`}
+        >
+          Borrow {book.name}
+        </h2>
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block mb-2">Your Name</label>
+            <label
+              className={`block mb-2 ${
+                theme === "dark" ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              Your Name
+            </label>
             <input
               type="text"
-              value={user.displayName || ""}
+              value={user?.displayName || ""}
               readOnly
               className={`w-full p-2 rounded border ${
                 theme === "dark"
-                  ? "bg-gray-700 border-gray-600"
-                  : "bg-gray-100 border-gray-300"
+                  ? "bg-gray-700 border-gray-600 text-white"
+                  : "bg-gray-100 border-gray-300 text-gray-800"
               }`}
             />
           </div>
 
           <div className="mb-4">
-            <label className="block mb-2">Your Email</label>
+            <label
+              className={`block mb-2 ${
+                theme === "dark" ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              Your Email
+            </label>
             <input
               type="email"
-              value={user.email || ""}
+              value={user?.email || ""}
               readOnly
               className={`w-full p-2 rounded border ${
                 theme === "dark"
-                  ? "bg-gray-700 border-gray-600"
-                  : "bg-gray-100 border-gray-300"
+                  ? "bg-gray-700 border-gray-600 text-white"
+                  : "bg-gray-100 border-gray-300 text-gray-800"
               }`}
             />
           </div>
 
           <div className="mb-6">
-            <label className="block mb-2">Return Date</label>
+            <label
+              className={`block mb-2 ${
+                theme === "dark" ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              Return Date
+            </label>
             <DatePicker
               selected={returnDate}
               onChange={(date) => setReturnDate(date)}
               minDate={new Date()}
               className={`w-full p-2 rounded border ${
                 theme === "dark"
-                  ? "bg-gray-700 border-gray-600"
-                  : "bg-gray-100 border-gray-300"
+                  ? "bg-gray-700 border-gray-600 text-white"
+                  : "bg-gray-100 border-gray-300 text-gray-800"
               }`}
               required
             />
@@ -91,7 +119,9 @@ const BorrowModal = ({ book, user, onClose, onBorrow }) => {
             type="submit"
             disabled={loading || !returnDate}
             className={`w-full py-2 px-4 rounded-md ${
-              theme === "dark"
+              loading || !returnDate
+                ? "bg-gray-400 cursor-not-allowed"
+                : theme === "dark"
                 ? "bg-purple-600 hover:bg-purple-700"
                 : "bg-purple-500 hover:bg-purple-600"
             } text-white transition-colors`}

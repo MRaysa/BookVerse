@@ -37,7 +37,7 @@ const CategoryGrid = () => {
   const navigate = useNavigate();
 
   const handleCategoryClick = (categoryName) => {
-    navigate(`/books?category=${encodeURIComponent(categoryName)}`);
+    navigate(`/books-category/${encodeURIComponent(categoryName)}`);
   };
   return (
     <section
