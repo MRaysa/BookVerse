@@ -11,6 +11,7 @@ import PrivateRoute from "./PrivateRoute";
 import BookDetailsPage from "../pages/BookDetailsPage";
 import BooksPage from "../pages/BooksPage";
 import BooksCategory from "../components/Home/BooksCategory";
+import BookDetails from "../components/BookDetails";
 
 const router = createBrowserRouter([
   {
@@ -67,6 +68,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <BooksCategory />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/book-details/:id",
+        element: (
+          <PrivateRoute>
+            <BookDetails />
           </PrivateRoute>
         ),
       },
