@@ -1,4 +1,4 @@
-import React, { use, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router";
 import { motion } from "framer-motion";
 import ReactStars from "react-rating-stars-component";
@@ -11,7 +11,7 @@ const BookDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const { user } = use(AuthContext);
+  const { user } = useContext(AuthContext);
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -49,15 +49,77 @@ const BookDetails = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div
+        className={`min-h-screen ${
+          theme === "dark" ? "bg-gray-900" : "bg-gray-100"
+        } p-8`}
+      >
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div
+        className={`min-h-screen ${
+          theme === "dark" ? "bg-gray-900" : "bg-gray-100"
+        } p-8`}
+      >
+        <div className="max-w-7xl mx-auto text-center py-12">
+          <h2
+            className={`text-2xl font-bold ${
+              theme === "dark" ? "text-red-400" : "text-red-600"
+            }`}
+          >
+            Error: {error}
+          </h2>
+          <button
+            onClick={() => navigate(-1)}
+            className={`mt-4 px-4 py-2 rounded-md ${
+              theme === "dark"
+                ? "bg-purple-600 hover:bg-purple-700"
+                : "bg-purple-500 hover:bg-purple-600"
+            } text-white`}
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
   }
 
   if (!book) {
-    return <div>Book not found</div>;
+    return (
+      <div
+        className={`min-h-screen ${
+          theme === "dark" ? "bg-gray-900" : "bg-gray-100"
+        } p-8`}
+      >
+        <div className="max-w-7xl mx-auto text-center py-12">
+          <h2
+            className={`text-2xl font-bold ${
+              theme === "dark" ? "text-white" : "text-gray-800"
+            }`}
+          >
+            Book not found
+          </h2>
+          <button
+            onClick={() => navigate(-1)}
+            className={`mt-4 px-4 py-2 rounded-md ${
+              theme === "dark"
+                ? "bg-purple-600 hover:bg-purple-700"
+                : "bg-purple-500 hover:bg-purple-600"
+            } text-white`}
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (

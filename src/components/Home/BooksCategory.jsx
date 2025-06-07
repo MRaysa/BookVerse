@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { motion } from "framer-motion";
 import ReactStars from "react-rating-stars-component";
 import { useTheme } from "../../contexts/ThemeContext";
-import axios from "axios";
+import api from "../../api/api";
 
 const BooksCategory = () => {
   const { id: categoryName } = useParams();
+  const navigate = useNavigate();
   const { theme } = useTheme();
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,10 +17,8 @@ const BooksCategory = () => {
     const fetchBooks = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `http://localhost:3000/api/books/category/${encodeURIComponent(
-            categoryName
-          )}`
+        const response = await api.get(
+          `/api/books/category/${encodeURIComponent(categoryName)}`
         );
         setBooks(response.data.data);
         setLoading(false);
@@ -31,6 +30,10 @@ const BooksCategory = () => {
 
     fetchBooks();
   }, [categoryName]);
+
+  const handleDetailsClick = (bookId) => {
+    navigate(`/book-details/${bookId}`);
+  };
 
   if (loading) {
     return (
@@ -162,6 +165,16 @@ const BooksCategory = () => {
                   >
                     Available: {book.quantity}
                   </p>
+                  <button
+                    onClick={() => handleDetailsClick(book._id)}
+                    className={`w-full py-2 px-4 rounded-md ${
+                      theme === "dark"
+                        ? "bg-blue-600 hover:bg-blue-700"
+                        : "bg-blue-500 hover:bg-blue-600"
+                    } text-white`}
+                  >
+                    Details
+                  </button>
                 </div>
               </motion.div>
             ))}

@@ -14,8 +14,13 @@ const BorrowModal = ({ book, user, onClose, onBorrow }) => {
     if (!returnDate) return;
 
     setLoading(true);
-    await onBorrow(returnDate);
-    setLoading(false);
+    try {
+      await onBorrow(returnDate);
+    } catch (err) {
+      console.error("Borrow error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
