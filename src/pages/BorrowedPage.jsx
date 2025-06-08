@@ -37,14 +37,48 @@ const BorrowedPage = () => {
   const handleReturn = async (borrowId) => {
     try {
       setReturningId(borrowId);
-      await axios.post(`/api/return/${borrowId}`);
 
-      // Update local state
-      setBorrowedBooks((prev) => prev.filter((book) => book._id !== borrowId));
-      toast.success("Book returned successfully!");
+      // First verify the record exists locally
+      const recordExists = borrowedBooks.some((book) => book._id === borrowId);
+      if (!recordExists) {
+        throw new Error("Borrow record not found in your list");
+      }
+
+      const response = await axios.post(`/api/return/${borrowId}`, null, {
+        headers: {
+          Authorization: `Bearer ${await user.getIdToken()}`,
+        },
+      });
+
+      if (response.data.success) {
+        // Refresh the borrowed books list
+        const refreshResponse = await axios.get("/api/borrowed", {
+          headers: {
+            Authorization: `Bearer ${await user.getIdToken()}`,
+          },
+        });
+        setBorrowedBooks(refreshResponse.data.data);
+        toast.success("Book returned successfully!");
+      } else {
+        throw new Error(response.data.message || "Failed to return book");
+      }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to return book");
-      console.error("Error returning book:", error);
+      const errorMessage = error.response?.data?.message || error.message;
+      toast.error(errorMessage);
+
+      if (error.response?.status === 404) {
+        // If record not found, refresh the list
+        try {
+          const refreshResponse = await axios.get("/api/borrowed", {
+            headers: {
+              Authorization: `Bearer ${await user.getIdToken()}`,
+            },
+          });
+          setBorrowedBooks(refreshResponse.data.data);
+        } catch (refreshError) {
+          console.error("Failed to refresh borrowed books:", refreshError);
+        }
+      }
     } finally {
       setReturningId(null);
     }
