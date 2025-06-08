@@ -6,6 +6,7 @@ import { useTheme } from "../contexts/ThemeContext";
 import { AuthContext } from "../contexts/AuthContext";
 import api from "../api/api";
 import BorrowModal from "../components/BorrowModal";
+import { toast } from "react-hot-toast";
 
 const BookDetails = () => {
   const { id } = useParams();
@@ -23,9 +24,12 @@ const BookDetails = () => {
         setLoading(true);
         const response = await api.get(`/api/books/${id}`);
         setBook(response.data.data);
-        setLoading(false);
       } catch (err) {
-        setError(err.response?.data?.message || err.message);
+        setError(err.response?.data?.message || "Failed to fetch book details");
+        toast.error(
+          err.response?.data?.message || "Failed to fetch book details"
+        );
+      } finally {
         setLoading(false);
       }
     };
@@ -35,16 +39,40 @@ const BookDetails = () => {
 
   const handleBorrow = async (returnDate) => {
     try {
-      await api.post("/api/borrow", {
+      // First check locally if book is available
+      if (book.quantity <= 0) {
+        toast.error("No copies available");
+        setShowBorrowModal(false);
+        return;
+      }
+
+      const response = await api.post("/api/borrow", {
         bookId: id,
         returnDate: returnDate.toISOString(),
+        // Add userId if your backend expects it
+        userId: user?.uid || user?.email,
       });
 
-      // Update local book quantity
-      setBook((prev) => ({ ...prev, quantity: prev.quantity - 1 }));
-      setShowBorrowModal(false);
+      if (response.data.success) {
+        // Update local book quantity
+        setBook((prev) => ({ ...prev, quantity: prev.quantity - 1 }));
+        setShowBorrowModal(false);
+        toast.success("Book borrowed successfully!");
+      } else {
+        throw new Error(response.data.message || "Failed to borrow book");
+      }
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to borrow book");
+      const errorMessage = err.response?.data?.message || err.message;
+      setError(errorMessage);
+      toast.error(errorMessage);
+
+      // Refresh book data if borrow failed
+      try {
+        const refreshResponse = await api.get(`/api/books/${id}`);
+        setBook(refreshResponse.data.data);
+      } catch (refreshError) {
+        console.error("Failed to refresh book data:", refreshError);
+      }
     }
   };
 
@@ -140,7 +168,7 @@ const BookDetails = () => {
           <div className="md:flex">
             <div className="md:w-1/3">
               <img
-                src={book.image}
+                src={book.image || "/default-book-cover.jpg"}
                 alt={book.name}
                 className="w-full h-full object-cover"
               />
@@ -201,7 +229,7 @@ const BookDetails = () => {
                   theme === "dark" ? "text-gray-300" : "text-gray-600"
                 }`}
               >
-                {book.description}
+                {book.description || "No description available."}
               </p>
 
               <button
@@ -226,7 +254,7 @@ const BookDetails = () => {
         </motion.div>
       </div>
 
-      {showBorrowModal && (
+      {showBorrowModal && user && (
         <BorrowModal
           book={book}
           user={user}
