@@ -17,13 +17,31 @@ const BookDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showBorrowModal, setShowBorrowModal] = useState(false);
+  const [alreadyBorrowed, setAlreadyBorrowed] = useState(false);
 
   useEffect(() => {
-    const fetchBook = async () => {
+    const fetchBookData = async () => {
       try {
         setLoading(true);
-        const response = await api.get(`/api/books/${id}`);
-        setBook(response.data.data);
+
+        // Fetch book details
+        const bookResponse = await api.get(`/api/books/${id}`);
+        setBook(bookResponse.data.data);
+
+        // Check if user has already borrowed this book
+        if (user) {
+          try {
+            const borrowResponse = await api.get(`/api/borrowed/${id}`, {
+              headers: {
+                Authorization: `Bearer ${await user.getIdToken()}`,
+              },
+            });
+            setAlreadyBorrowed(borrowResponse.data.isBorrowed);
+          } catch (borrowError) {
+            console.log("Borrow check error:", borrowError);
+            setAlreadyBorrowed(false);
+          }
+        }
       } catch (err) {
         setError(err.response?.data?.message || "Failed to fetch book details");
         toast.error(
@@ -34,12 +52,11 @@ const BookDetails = () => {
       }
     };
 
-    fetchBook();
-  }, [id]);
+    fetchBookData();
+  }, [id, user]);
 
   const handleBorrow = async (returnDate) => {
     try {
-      // First check locally if book is available
       if (book.quantity <= 0) {
         toast.error("No copies available");
         setShowBorrowModal(false);
@@ -49,13 +66,12 @@ const BookDetails = () => {
       const response = await api.post("/api/borrow", {
         bookId: id,
         returnDate: returnDate.toISOString(),
-        // Add userId if your backend expects it
-        userId: user?.uid || user?.email,
+        userId: user.uid || user.email,
       });
 
       if (response.data.success) {
-        // Update local book quantity
         setBook((prev) => ({ ...prev, quantity: prev.quantity - 1 }));
+        setAlreadyBorrowed(true);
         setShowBorrowModal(false);
         toast.success("Book borrowed successfully!");
       } else {
@@ -66,12 +82,12 @@ const BookDetails = () => {
       setError(errorMessage);
       toast.error(errorMessage);
 
-      // Refresh book data if borrow failed
+      // Refresh data
       try {
         const refreshResponse = await api.get(`/api/books/${id}`);
         setBook(refreshResponse.data.data);
       } catch (refreshError) {
-        console.error("Failed to refresh book data:", refreshError);
+        console.error("Refresh error:", refreshError);
       }
     }
   };
@@ -234,9 +250,9 @@ const BookDetails = () => {
 
               <button
                 onClick={() => setShowBorrowModal(true)}
-                disabled={book.quantity <= 0 || !user}
+                disabled={book.quantity <= 0 || !user || alreadyBorrowed}
                 className={`px-6 py-3 rounded-lg font-semibold ${
-                  book.quantity <= 0 || !user
+                  book.quantity <= 0 || !user || alreadyBorrowed
                     ? "bg-gray-400 cursor-not-allowed"
                     : theme === "dark"
                     ? "bg-purple-600 hover:bg-purple-700"
@@ -245,6 +261,8 @@ const BookDetails = () => {
               >
                 {!user
                   ? "Login to Borrow"
+                  : alreadyBorrowed
+                  ? "You already borrowed this book"
                   : book.quantity <= 0
                   ? "Out of Stock"
                   : "Borrow This Book"}
