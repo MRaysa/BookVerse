@@ -4,75 +4,155 @@ import { motion } from "framer-motion";
 import ReactStars from "react-rating-stars-component";
 import { useTheme } from "../../contexts/ThemeContext";
 import api from "../../api/api";
+import {
+  FaBookOpen,
+  FaBook,
+  FaCompass,
+  FaExclamationTriangle,
+} from "react-icons/fa";
 
 const BooksCategory = () => {
   const { id: categoryName } = useParams();
   const navigate = useNavigate();
   const { theme } = useTheme();
   const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState({
+    isLoading: true,
+    message: "Loading books...",
+  });
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    let timeoutId;
+
     const fetchBooks = async () => {
       try {
-        setLoading(true);
+        setLoading({ isLoading: true, message: "Loading books..." });
+        setError(null);
+
         const response = await api.get(
           `/api/books/category/${encodeURIComponent(categoryName)}`
         );
-        setBooks(response.data.data);
-        setLoading(false);
+
+        // Clear any pending timeout
+        if (timeoutId) clearTimeout(timeoutId);
+
+        if (response.data && Array.isArray(response.data.data)) {
+          setBooks(response.data.data);
+        } else {
+          setBooks([]);
+        }
+
+        setLoading({ isLoading: false, message: "" });
       } catch (err) {
-        setError(err.response?.data?.message || err.message);
-        setLoading(false);
+        // Clear any pending timeout
+        if (timeoutId) clearTimeout(timeoutId);
+
+        console.error("Error fetching books:", err);
+
+        if (err.response) {
+          if (err.response.status === 404) {
+            setBooks([]);
+          } else {
+            setError(err.response.data?.message || "Failed to fetch books");
+          }
+        } else if (err.request) {
+          setError("Network error. Please check your connection.");
+        } else {
+          setError(err.message || "An unexpected error occurred");
+        }
+
+        setLoading({ isLoading: false, message: "" });
       }
     };
 
-    fetchBooks();
-  }, [categoryName]);
+    // Set timeout only if the request takes too long
+    timeoutId = setTimeout(() => {
+      if (loading.isLoading) {
+        setError("Request is taking longer than expected...");
+        setLoading({ isLoading: false, message: "" });
+      }
+    }, 8000);
 
+    fetchBooks();
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [categoryName]);
   const handleDetailsClick = (bookId) => {
     navigate(`/book-details/${bookId}`);
   };
 
-  if (loading) {
+  // Loading state
+  if (loading.isLoading) {
     return (
       <div
-        className={`min-h-screen ${
+        className={`min-h-screen flex flex-col items-center justify-center ${
           theme === "dark" ? "bg-gray-900" : "bg-gray-100"
         } p-8`}
       >
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
-        </div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mb-4"></div>
+        <p
+          className={`text-lg ${
+            theme === "dark" ? "text-gray-300" : "text-gray-600"
+          }`}
+        >
+          {loading.message}
+        </p>
       </div>
     );
   }
 
+  // Error state
   if (error) {
     return (
       <div
-        className={`min-h-screen ${
+        className={`min-h-screen flex flex-col items-center justify-center ${
           theme === "dark" ? "bg-gray-900" : "bg-gray-100"
         } p-8`}
       >
-        <div className="max-w-7xl mx-auto text-center py-12">
-          <h2
-            className={`text-2xl font-bold ${
-              theme === "dark" ? "text-red-400" : "text-red-600"
-            }`}
-          >
-            Error: {error}
-          </h2>
+        <div
+          className={`p-4 rounded-full mb-4 ${
+            theme === "dark" ? "bg-red-900/30" : "bg-red-100"
+          }`}
+        >
+          <FaExclamationTriangle className="text-4xl text-red-500" />
+        </div>
+        <h2
+          className={`text-2xl font-bold mb-2 ${
+            theme === "dark" ? "text-red-400" : "text-red-600"
+          }`}
+        >
+          Error Loading Books
+        </h2>
+        <p
+          className={`max-w-md text-center mb-6 ${
+            theme === "dark" ? "text-gray-400" : "text-gray-600"
+          }`}
+        >
+          {error}
+        </p>
+        <div className="flex gap-4">
           <button
             onClick={() => window.location.reload()}
-            className={`mt-4 px-4 py-2 rounded-md ${
+            className={`px-6 py-2 rounded-md ${
               theme === "dark"
                 ? "bg-purple-600 hover:bg-purple-700"
                 : "bg-purple-500 hover:bg-purple-600"
             } text-white`}
           >
             Try Again
+          </button>
+          <button
+            onClick={() => navigate("/")}
+            className={`px-6 py-2 rounded-md ${
+              theme === "dark"
+                ? "bg-gray-700 hover:bg-gray-600"
+                : "bg-gray-200 hover:bg-gray-300"
+            } ${theme === "dark" ? "text-white" : "text-gray-800"}`}
+          >
+            Go Home
           </button>
         </div>
       </div>
@@ -98,15 +178,68 @@ const BooksCategory = () => {
         </motion.h1>
 
         {books.length === 0 ? (
-          <div className="text-center py-12">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className={`flex flex-col items-center justify-center py-16 px-4 rounded-lg ${
+              theme === "dark" ? "bg-gray-800" : "bg-white"
+            } shadow-lg text-center`}
+          >
+            <div
+              className={`p-5 rounded-full ${
+                theme === "dark" ? "bg-gray-700" : "bg-gray-100"
+              } mb-6`}
+            >
+              <FaBook
+                className={`text-5xl ${
+                  theme === "dark" ? "text-purple-400" : "text-purple-500"
+                }`}
+              />
+            </div>
             <h3
-              className={`text-xl ${
-                theme === "dark" ? "text-gray-300" : "text-gray-600"
+              className={`text-2xl font-semibold mb-3 ${
+                theme === "dark" ? "text-gray-200" : "text-gray-800"
               }`}
             >
-              No books found in the {decodeURIComponent(categoryName)} category.
+              No Books Found in This Category
             </h3>
-          </div>
+            <p
+              className={`max-w-md mb-6 ${
+                theme === "dark" ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
+              We couldn't find any books matching the "
+              {decodeURIComponent(categoryName)}" category. Our library is
+              constantly expanding, so please check back later.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center">
+              <button
+                onClick={() => navigate("/")}
+                className={`px-6 py-3 rounded-lg flex items-center justify-center ${
+                  theme === "dark"
+                    ? "bg-purple-600 hover:bg-purple-700"
+                    : "bg-purple-500 hover:bg-purple-600"
+                } text-white transition-colors`}
+              >
+                <FaCompass className="mr-2" />
+                Explore Other Categories
+              </button>
+              <button
+                onClick={() => navigate("/all-books")}
+                className={`px-6 py-3 rounded-lg flex items-center justify-center ${
+                  theme === "dark"
+                    ? "bg-gray-700 hover:bg-gray-600"
+                    : "bg-gray-200 hover:bg-gray-300"
+                } ${
+                  theme === "dark" ? "text-white" : "text-gray-800"
+                } transition-colors`}
+              >
+                <FaBookOpen className="mr-2" />
+                View All Books
+              </button>
+            </div>
+          </motion.div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {books.map((book, index) => (
