@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import Rating from "./Rating";
 
-const BookTable = ({ books, onUpdate }) => {
+const BookTable = ({ books, onUpdate, onViewDetails }) => {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white rounded-lg overflow-hidden">
