@@ -8,6 +8,10 @@ const api = axios.create({
 
 api.interceptors.request.use(
   async (config) => {
+    // Set Content-Type for FormData
+    if (config.data instanceof FormData) {
+      config.headers["Content-Type"] = "multipart/form-data";
+    }
     const user = auth.currentUser;
     if (user) {
       const token = await user.getIdToken();
