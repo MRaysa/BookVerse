@@ -45,6 +45,11 @@ const Navbar = () => {
       path: "/borrowed-books",
       icon: <FaShoppingBasket className="text-lg" />,
     },
+    {
+      name: "My All Books",
+      path: "/my-all-books",
+      icon: <FaBook className="text-lg" />,
+    },
   ];
 
   const handleSignOut = async () => {

@@ -54,7 +54,7 @@ const AddBookPage = () => {
         image: data.imageUrl,
       });
       const response = await axios.post(
-        "http://localhost:3000/api/books", // Full URL
+        "http://localhost:3000/api/books",
         {
           name: data.title,
           author: data.author,
@@ -63,6 +63,7 @@ const AddBookPage = () => {
           rating: parseFloat(data.rating),
           description: data.description,
           image: data.imageUrl,
+          addedBy: user.email, // Automatically include user's email
         },
         {
           headers: {
@@ -75,11 +76,7 @@ const AddBookPage = () => {
       reset();
       navigate("/all-books");
     } catch (error) {
-      console.error("Full error details:", {
-        config: error.config,
-        response: error.response,
-        message: error.message,
-      });
+      console.error("Error adding book:", error);
       toast.error(error.response?.data?.message || "Failed to add book");
     } finally {
       setIsLoading(false);
@@ -209,6 +206,19 @@ const AddBookPage = () => {
               {...register("imageUrl")}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter image URL"
+            />
+          </div>
+
+          {/* Added By (read-only) */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Added By
+            </label>
+            <input
+              type="text"
+              value={user?.email || ""}
+              readOnly
+              className="w-full px-4 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
             />
           </div>
         </div>
