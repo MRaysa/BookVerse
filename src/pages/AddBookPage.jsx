@@ -32,6 +32,16 @@ const AddBookPage = () => {
     "Travel",
   ];
 
+  // Static book content information
+  const bookContentInfo = `
+  This book contains:
+  - Complete text of the work
+  - Author biography
+  - Critical analysis
+  - Discussion questions
+  - Further reading suggestions
+  `;
+
   const onSubmit = async (data) => {
     if (!user) {
       toast.error("Please login to add books");
@@ -63,7 +73,8 @@ const AddBookPage = () => {
           rating: parseFloat(data.rating),
           description: data.description,
           image: data.imageUrl,
-          addedBy: user.email, // Automatically include user's email
+          content: bookContentInfo, // Include static content
+          addedBy: user.email,
         },
         {
           headers: {
@@ -234,6 +245,19 @@ const AddBookPage = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter book description"
           ></textarea>
+        </div>
+
+        {/* Book Content Information (static) */}
+        <div className="bg-blue-50 p-4 rounded-md">
+          <h3 className="font-medium text-blue-800 mb-2">
+            Book Content Information
+          </h3>
+          <pre className="text-sm text-gray-700 whitespace-pre-wrap">
+            {bookContentInfo}
+          </pre>
+          <p className="text-sm text-blue-600 mt-2">
+            This information will be included with all books.
+          </p>
         </div>
 
         {/* Submit Button */}
