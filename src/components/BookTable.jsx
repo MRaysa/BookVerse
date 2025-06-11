@@ -152,7 +152,7 @@ const BookTable = ({ books, onUpdate, onViewDetails }) => {
                   {book.name}
                 </Link>
               </td>
-              <td className="py-3 px-4">{book.author}</td>
+              <td className="py-3 px-4 text-blue-500">{book.author}</td>
               <td className="py-3 px-4">
                 <span
                   className={`${currentTheme.category} px-3 py-1 rounded-full text-xs flex items-center w-min`}
