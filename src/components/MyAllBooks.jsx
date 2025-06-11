@@ -2,14 +2,20 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router";
 import axios from "axios";
 import Swal from "sweetalert2";
-import Rating from "./Rating";
+import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "../contexts/ThemeContext";
 import { AuthContext } from "../contexts/AuthContext";
+import Rating from "./Rating";
+import { FaBook, FaPlus, FaEdit, FaTrash, FaSearch } from "react-icons/fa";
+import { IoBookOutline } from "react-icons/io5";
 
 const MyAllBooks = () => {
   const { user } = useContext(AuthContext);
+  const { theme } = useTheme();
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -69,6 +75,8 @@ const MyAllBooks = () => {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
+      background: theme === "dark" ? "#1f2937" : "#ffffff",
+      color: theme === "dark" ? "#ffffff" : "#1f2937",
     });
 
     if (!result.isConfirmed) return;
@@ -82,20 +90,35 @@ const MyAllBooks = () => {
       });
 
       setBooks((prevBooks) => prevBooks.filter((book) => book._id !== bookId));
-      Swal.fire("Deleted!", "Your book has been deleted.", "success");
+      Swal.fire({
+        title: "Deleted!",
+        text: "Your book has been deleted.",
+        icon: "success",
+        background: theme === "dark" ? "#1f2937" : "#ffffff",
+        color: theme === "dark" ? "#ffffff" : "#1f2937",
+      });
     } catch (err) {
       console.error("Error deleting book:", err);
-      Swal.fire(
-        "Error!",
-        err.response?.data?.message || "Failed to delete book",
-        "error"
-      );
+      Swal.fire({
+        title: "Error!",
+        text: err.response?.data?.message || "Failed to delete book",
+        icon: "error",
+        background: theme === "dark" ? "#1f2937" : "#ffffff",
+        color: theme === "dark" ? "#ffffff" : "#1f2937",
+      });
 
       if (err.response?.status === 401) {
         navigate("/login");
       }
     }
   };
+
+  const filteredBooks = books.filter(
+    (book) =>
+      book.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      book.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (!user) {
     return (
@@ -107,162 +130,400 @@ const MyAllBooks = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div
+        className={`flex justify-center items-center h-screen ${
+          theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+        }`}
+      >
+        <motion.div
+          animate={{
+            rotate: 360,
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            rotate: {
+              repeat: Infinity,
+              duration: 2,
+              ease: "linear",
+            },
+            scale: {
+              repeat: Infinity,
+              duration: 1.5,
+              repeatType: "reverse",
+            },
+          }}
+          className="p-4 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600"
+        >
+          <FaBook className="text-white text-3xl" />
+        </motion.div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div
-          className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4"
-          role="alert"
+      <div
+        className={`container mx-auto px-4 py-8 ${
+          theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+        }`}
+      >
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className={`p-6 rounded-xl shadow-lg ${
+            theme === "dark" ? "bg-gray-800" : "bg-white"
+          }`}
         >
-          <p className="font-bold">Error</p>
-          <p>{error}</p>
-          <button
+          <div
+            className={`text-xl font-bold mb-2 ${
+              theme === "dark" ? "text-red-400" : "text-red-600"
+            }`}
+          >
+            Error
+          </div>
+          <p
+            className={`mb-4 ${
+              theme === "dark" ? "text-gray-300" : "text-gray-700"
+            }`}
+          >
+            {error}
+          </p>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => window.location.reload()}
-            className="mt-2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            className={`px-4 py-2 rounded-md ${
+              theme === "dark"
+                ? "bg-purple-600 hover:bg-purple-700"
+                : "bg-purple-500 hover:bg-purple-600"
+            } text-white`}
           >
             Retry
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">My Books</h1>
-        <Link
-          to="/add-book"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+    <div
+      className={`min-h-screen ${
+        theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+      } pb-12`}
+    >
+      <div className="container mx-auto px-4 py-8">
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.4 }}
+          className="mb-8"
         >
-          Add New Book
-        </Link>
-      </div>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+            <div>
+              <h1
+                className={`text-3xl font-bold ${
+                  theme === "dark" ? "text-white" : "text-purple-900"
+                }`}
+              >
+                My Books Collection
+              </h1>
+              <p
+                className={`mt-1 ${
+                  theme === "dark" ? "text-gray-400" : "text-gray-600"
+                }`}
+              >
+                {books.length} book{books.length !== 1 ? "s" : ""} in your
+                library
+              </p>
+            </div>
 
-      {books.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
-          <svg
-            className="w-16 h-16 mx-auto text-gray-400 mb-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-            />
-          </svg>
-          <h2 className="text-xl font-semibold mb-2">No Books Found</h2>
-          <p className="text-gray-600 mb-4">You haven't added any books yet.</p>
-          <Link
-            to="/add-book"
-            className="inline-block bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
-          >
-            Add Your First Book
-          </Link>
-        </div>
-      ) : (
-        <div className="overflow-x-auto bg-white rounded-lg shadow">
-          <table className="min-w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Cover
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Title
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Author
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Category
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Rating
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Quantity
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {books.map((book) => (
-                <tr key={book._id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <Link to={`/book-details/${book._id}`}>
-                      <img
-                        src={book.image || "/default-book-cover.jpg"}
-                        alt={book.name}
-                        className="w-12 h-16 object-cover rounded"
-                        onError={(e) => {
-                          e.target.src = "/default-book-cover.jpg";
-                        }}
-                      />
-                    </Link>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <Link
-                      to={`/book-details/${book._id}`}
-                      className="text-blue-600 hover:underline font-medium"
-                    >
-                      {book.name}
-                    </Link>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{book.author}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                      {book.category}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <Rating value={book.rating} />
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        book.quantity > 0
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {book.quantity} {book.quantity === 1 ? "copy" : "copies"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex space-x-2">
-                      <Link
-                        to={`/update-book/${book._id}`}
-                        className="text-blue-600 hover:text-blue-900"
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                className={`relative flex items-center ${
+                  theme === "dark" ? "bg-gray-700" : "bg-white"
+                } rounded-lg shadow-sm w-full`}
+              >
+                <FaSearch
+                  className={`absolute left-3 ${
+                    theme === "dark" ? "text-gray-400" : "text-gray-500"
+                  }`}
+                />
+                <input
+                  type="text"
+                  placeholder="Search books..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className={`pl-10 pr-4 py-2 w-full rounded-lg focus:outline-none focus:ring-2 ${
+                    theme === "dark"
+                      ? "bg-gray-700 text-white focus:ring-purple-500"
+                      : "bg-white text-gray-900 focus:ring-purple-300"
+                  }`}
+                />
+              </motion.div>
+
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/add-book")}
+                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg ${
+                  theme === "dark"
+                    ? "bg-purple-600 hover:bg-purple-700"
+                    : "bg-purple-500 hover:bg-purple-600"
+                } text-white shadow-md`}
+              >
+                <FaPlus /> Add Book
+              </motion.button>
+            </div>
+          </div>
+        </motion.div>
+
+        <AnimatePresence>
+          {filteredBooks.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              className={`text-center py-12 rounded-xl ${
+                theme === "dark" ? "bg-gray-800" : "bg-white"
+              } shadow-lg`}
+            >
+              <div className="text-6xl mb-4 text-purple-500 mx-auto flex justify-center">
+                <IoBookOutline />
+              </div>
+              <h2
+                className={`text-xl font-semibold mb-2 ${
+                  theme === "dark" ? "text-white" : "text-gray-800"
+                }`}
+              >
+                {searchTerm ? "No matching books found" : "No Books Found"}
+              </h2>
+              <p
+                className={`mb-6 ${
+                  theme === "dark" ? "text-gray-400" : "text-gray-600"
+                }`}
+              >
+                {searchTerm
+                  ? "Try a different search term"
+                  : "You haven't added any books yet."}
+              </p>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/add-book")}
+                className={`px-6 py-2 rounded-lg ${
+                  theme === "dark"
+                    ? "bg-purple-600 hover:bg-purple-700"
+                    : "bg-purple-500 hover:bg-purple-600"
+                } text-white`}
+              >
+                Add Your First Book
+              </motion.button>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className={`rounded-xl shadow-lg overflow-hidden ${
+                theme === "dark" ? "bg-gray-800" : "bg-white"
+              }`}
+            >
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead
+                    className={`${
+                      theme === "dark" ? "bg-gray-700" : "bg-gray-50"
+                    }`}
+                  >
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                        <span
+                          className={`${
+                            theme === "dark" ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          Cover
+                        </span>
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                        <span
+                          className={`${
+                            theme === "dark" ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          Title
+                        </span>
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                        <span
+                          className={`${
+                            theme === "dark" ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          Author
+                        </span>
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                        <span
+                          className={`${
+                            theme === "dark" ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          Category
+                        </span>
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                        <span
+                          className={`${
+                            theme === "dark" ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          Rating
+                        </span>
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                        <span
+                          className={`${
+                            theme === "dark" ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          Stock
+                        </span>
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                        <span
+                          className={`${
+                            theme === "dark" ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          Actions
+                        </span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    className={`divide-y divide-gray-200 ${
+                      theme === "dark" ? "bg-gray-800" : "bg-white"
+                    }`}
+                  >
+                    {filteredBooks.map((book, index) => (
+                      <motion.tr
+                        key={book._id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        whileHover={{ scale: 1.01 }}
+                        className={`${
+                          theme === "dark"
+                            ? "hover:bg-gray-700"
+                            : "hover:bg-gray-50"
+                        }`}
                       >
-                        Edit
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(book._id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <Link to={`/book-details/${book._id}`}>
+                            <motion.img
+                              src={book.image || "/default-book-cover.jpg"}
+                              alt={book.name}
+                              className="w-12 h-16 object-cover rounded shadow"
+                              whileHover={{ scale: 1.05 }}
+                              transition={{ type: "spring", stiffness: 400 }}
+                              onError={(e) => {
+                                e.target.src = "/default-book-cover.jpg";
+                              }}
+                            />
+                          </Link>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <Link
+                            to={`/book-details/${book._id}`}
+                            className={`font-medium ${
+                              theme === "dark"
+                                ? "text-purple-400 hover:text-purple-300"
+                                : "text-purple-600 hover:text-purple-800"
+                            }`}
+                          >
+                            {book.name}
+                          </Link>
+                        </td>
+                        <td
+                          className={`px-6 py-4 whitespace-nowrap ${
+                            theme === "dark" ? "text-gray-300" : "text-gray-700"
+                          }`}
+                        >
+                          {book.author}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                              theme === "dark"
+                                ? "bg-purple-900/50 text-purple-200"
+                                : "bg-purple-100 text-purple-800"
+                            }`}
+                          >
+                            {book.category}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <Rating value={book.rating} theme={theme} />
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                              book.quantity > 0
+                                ? theme === "dark"
+                                  ? "bg-green-900/50 text-green-300"
+                                  : "bg-green-100 text-green-800"
+                                : theme === "dark"
+                                ? "bg-red-900/50 text-red-300"
+                                : "bg-red-100 text-red-800"
+                            }`}
+                          >
+                            {book.quantity}{" "}
+                            {book.quantity === 1 ? "copy" : "copies"}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <div className="flex space-x-3">
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() =>
+                                navigate(`/update-book/${book._id}`)
+                              }
+                              className={`${
+                                theme === "dark"
+                                  ? "text-blue-400 hover:text-blue-300"
+                                  : "text-blue-600 hover:text-blue-800"
+                              }`}
+                              title="Edit"
+                            >
+                              <FaEdit />
+                            </motion.button>
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => handleDelete(book._id)}
+                              className={`${
+                                theme === "dark"
+                                  ? "text-red-400 hover:text-red-300"
+                                  : "text-red-600 hover:text-red-800"
+                              }`}
+                              title="Delete"
+                            >
+                              <FaTrash />
+                            </motion.button>
+                          </div>
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 };
