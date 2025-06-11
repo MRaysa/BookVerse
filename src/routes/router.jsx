@@ -14,6 +14,7 @@ import BooksCategory from "../components/Home/BooksCategory";
 import BookDetails from "../components/BookDetails";
 import UpdateBook from "../components/Home/UpdateBook";
 import MyAllBooks from "../components/MyAllBooks";
+import AboutUs from "../components/AboutUs";
 
 const router = createBrowserRouter([
   {
@@ -100,6 +101,10 @@ const router = createBrowserRouter([
       {
         path: "/books",
         Component: BooksPage,
+      },
+      {
+        path: "/aboutUs",
+        Component: AboutUs,
       },
     ],
   },

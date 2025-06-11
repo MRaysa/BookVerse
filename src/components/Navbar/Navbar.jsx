@@ -50,6 +50,11 @@ const Navbar = () => {
       path: "/my-all-books",
       icon: <FaBook className="text-lg" />,
     },
+    {
+      name: "About Us",
+      path: "/aboutUs",
+      icon: <FaBook className="text-lg" />,
+    },
   ];
 
   const handleSignOut = async () => {
