@@ -30,7 +30,6 @@ const AddBookPage = () => {
     "Fantasy",
     "Fiction",
     "Science",
-    "History",
     "Health",
     "Psychology",
     "Travel",
