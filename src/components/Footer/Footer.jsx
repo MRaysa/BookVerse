@@ -138,7 +138,7 @@ const Footer = () => {
         >
           <p className="flex items-center justify-center">
             Made with <FaHeart className="mx-1 text-red-500 animate-pulse" /> by
-            Your Name © {new Date().getFullYear()}
+            Aysa Siddika Meem © {new Date().getFullYear()}
           </p>
           <motion.p className="mt-2" whileHover={{ scale: 1.02 }}>
             All rights reserved

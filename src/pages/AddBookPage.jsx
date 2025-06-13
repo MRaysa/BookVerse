@@ -54,7 +54,7 @@ const AddBookPage = () => {
     try {
       const token = await user.getIdToken();
       const response = await axios.post(
-        "http://localhost:3000/api/books",
+        "https://book-verse-server-sigma.vercel.app/api/books",
         {
           name: data.title,
           author: data.author,

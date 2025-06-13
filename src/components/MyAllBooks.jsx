@@ -27,11 +27,14 @@ const MyAllBooks = () => {
     const fetchMyBooks = async () => {
       try {
         const token = await user.getIdToken();
-        const response = await axios.get("http://localhost:3000/api/my-books", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          "https://book-verse-server-sigma.vercel.app/api/my-books",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!response.data.success) {
           throw new Error(response.data.message || "Failed to load books");
@@ -83,11 +86,14 @@ const MyAllBooks = () => {
 
     try {
       const token = await user.getIdToken();
-      await axios.delete(`http://localhost:3000/api/books/${bookId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.delete(
+        `https://book-verse-server-sigma.vercel.app/api/books/${bookId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       setBooks((prevBooks) => prevBooks.filter((book) => book._id !== bookId));
       Swal.fire({

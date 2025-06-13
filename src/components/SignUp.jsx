@@ -106,13 +106,16 @@ const SignUp = () => {
 
   const saveUserToDatabase = async (userProfile) => {
     try {
-      const response = await fetch("http://localhost:3000/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userProfile),
-      });
+      const response = await fetch(
+        "https://book-verse-server-sigma.vercel.app/users",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userProfile),
+        }
+      );
       return await response.json();
     } catch (error) {
       console.error("Error saving user to database:", error);
