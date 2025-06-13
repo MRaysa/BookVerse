@@ -36,11 +36,12 @@ const router = createBrowserRouter([
       },
       {
         path: "/all-books",
-        element: (
-          <PrivateRoute>
-            <AllBooksPage />
-          </PrivateRoute>
-        ),
+        // element: (
+        //   <PrivateRoute>
+        //     <AllBooksPage />
+        //   </PrivateRoute>
+        // ),
+        Component: AllBooksPage,
       },
       {
         path: "/add-book",

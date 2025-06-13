@@ -195,19 +195,19 @@ const BookDetails = () => {
         animate={{ opacity: 1 }}
         className={`min-h-screen flex items-center justify-center ${
           theme === "dark" ? "bg-gray-900" : "bg-gray-50"
-        } p-8`}
+        } p-4 sm:p-8`}
       >
-        <div className="max-w-md text-center">
+        <div className="max-w-md w-full text-center">
           <motion.div
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
-            className={`p-6 rounded-2xl shadow-xl ${
+            className={`p-4 sm:p-6 rounded-2xl shadow-xl ${
               theme === "dark" ? "bg-gray-800" : "bg-white"
             }`}
           >
             <div className="text-6xl mb-4">📕</div>
             <h2
-              className={`text-2xl font-bold mb-4 ${
+              className={`text-xl sm:text-2xl font-bold mb-4 ${
                 theme === "dark" ? "text-red-400" : "text-red-600"
               }`}
             >
@@ -224,7 +224,7 @@ const BookDetails = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate(-1)}
-              className={`px-6 py-3 rounded-full font-semibold ${
+              className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold ${
                 theme === "dark"
                   ? "bg-purple-600 hover:bg-purple-700"
                   : "bg-purple-500 hover:bg-purple-600"
@@ -244,21 +244,21 @@ const BookDetails = () => {
       <div
         className={`min-h-screen flex items-center justify-center ${
           theme === "dark" ? "bg-gray-900" : "bg-gray-50"
-        } p-8`}
+        } p-4 sm:p-8`}
       >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-md text-center"
+          className="max-w-md w-full text-center"
         >
           <div
-            className={`p-8 rounded-2xl shadow-lg ${
+            className={`p-6 sm:p-8 rounded-2xl shadow-lg ${
               theme === "dark" ? "bg-gray-800" : "bg-white"
             }`}
           >
             <div className="text-6xl mb-4">🔍</div>
             <h2
-              className={`text-2xl font-bold mb-4 ${
+              className={`text-xl sm:text-2xl font-bold mb-4 ${
                 theme === "dark" ? "text-white" : "text-gray-800"
               }`}
             >
@@ -276,7 +276,7 @@ const BookDetails = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate(-1)}
-              className={`px-6 py-3 rounded-full font-semibold ${
+              className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold ${
                 theme === "dark"
                   ? "bg-purple-600 hover:bg-purple-700"
                   : "bg-purple-500 hover:bg-purple-600"
@@ -295,7 +295,7 @@ const BookDetails = () => {
     <div
       className={`min-h-screen ${
         theme === "dark" ? "bg-gray-900" : "bg-gray-50"
-      } p-4 md:p-8`}
+      } p-4 sm:p-6 md:p-8`}
     >
       <motion.div
         initial={{ opacity: 0 }}
@@ -308,7 +308,7 @@ const BookDetails = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => navigate(-1)}
-          className={`mb-6 flex items-center px-4 py-2 rounded-full ${
+          className={`mb-4 sm:mb-6 flex items-center px-3 py-1 sm:px-4 sm:py-2 rounded-full text-sm sm:text-base ${
             theme === "dark"
               ? "bg-gray-800 hover:bg-gray-700"
               : "bg-white hover:bg-gray-100"
@@ -323,14 +323,14 @@ const BookDetails = () => {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className={`rounded-2xl shadow-xl overflow-hidden ${
+          className={`rounded-xl sm:rounded-2xl shadow-xl overflow-hidden ${
             theme === "dark" ? "bg-gray-800" : "bg-white"
           }`}
         >
-          <div className="md:flex">
+          <div className="flex flex-col md:flex-row">
             {/* Book Cover */}
-            <div className="md:w-2/5 relative">
-              <div className="relative h-full min-h-96 md:min-h-full">
+            <div className="w-full md:w-2/5 lg:w-1/3 relative">
+              <div className="relative h-64 sm:h-80 md:h-full">
                 {!imageLoaded && (
                   <div
                     className={`absolute inset-0 flex items-center justify-center ${
@@ -343,7 +343,7 @@ const BookDetails = () => {
                 <motion.img
                   src={book.image || "/default-book-cover.jpg"}
                   alt={book.name}
-                  className={`w-full h-full object-cover transition-opacity duration-500 ${
+                  className={`w-full h-full object-contain transition-opacity duration-500 ${
                     imageLoaded ? "opacity-100" : "opacity-0"
                   }`}
                   onLoad={() => setImageLoaded(true)}
@@ -354,7 +354,7 @@ const BookDetails = () => {
             </div>
 
             {/* Book Details */}
-            <div className="p-6 md:p-8 md:w-3/5">
+            <div className="p-4 sm:p-6 md:p-6 lg:p-8 w-full md:w-3/5 lg:w-2/3">
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -363,14 +363,14 @@ const BookDetails = () => {
                 <div className="flex justify-between items-start">
                   <div>
                     <h1
-                      className={`text-3xl md:text-4xl font-bold mb-2 ${
+                      className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-1 sm:mb-2 ${
                         theme === "dark" ? "text-white" : "text-gray-900"
                       }`}
                     >
                       {book.name}
                     </h1>
                     <p
-                      className={`text-xl mb-4 flex items-center ${
+                      className={`text-lg sm:text-xl mb-3 sm:mb-4 flex items-center ${
                         theme === "dark" ? "text-purple-300" : "text-purple-600"
                       }`}
                     >
@@ -382,11 +382,11 @@ const BookDetails = () => {
 
                 {/* Rating and Availability Section */}
                 <div
-                  className={`flex items-center justify-between mb-6 p-3 rounded-lg ${
+                  className={`flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 p-3 rounded-lg ${
                     theme === "dark" ? "bg-gray-700" : "bg-gray-100"
                   }`}
                 >
-                  <div className="flex items-center">
+                  <div className="flex items-center mb-2 sm:mb-0">
                     <span
                       className={`mr-2 font-medium ${
                         theme === "dark" ? "text-gray-300" : "text-gray-700"
@@ -439,30 +439,30 @@ const BookDetails = () => {
 
                 {/* Meta Information */}
                 <div
-                  className={`grid grid-cols-2 gap-4 mb-6 ${
+                  className={`grid grid-cols-1 xs:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6 ${
                     theme === "dark" ? "text-gray-300" : "text-gray-600"
                   }`}
                 >
                   <div className="flex items-center">
-                    <FiTag className="mr-2" />
-                    <span>{book.category}</span>
+                    <FiTag className="mr-2 min-w-4" />
+                    <span className="truncate">{book.category}</span>
                   </div>
                   <div className="flex items-center">
-                    <FiBookOpen className="mr-2" />
+                    <FiBookOpen className="mr-2 min-w-4" />
                     <span>{book.pages || "N/A"} pages</span>
                   </div>
                   <div className="flex items-center">
-                    <FiCalendar className="mr-2" />
+                    <FiCalendar className="mr-2 min-w-4" />
                     <span>{book.publishedYear || "N/A"}</span>
                   </div>
                   <div className="flex items-center">
-                    <FiInfo className="mr-2" />
+                    <FiInfo className="mr-2 min-w-4" />
                     <span>{book.language || "English"}</span>
                   </div>
                 </div>
 
                 {/* Description */}
-                <div className="mb-8">
+                <div className="mb-6 sm:mb-8">
                   <h3
                     className={`text-lg font-semibold mb-2 ${
                       theme === "dark" ? "text-white" : "text-gray-800"
@@ -484,7 +484,7 @@ const BookDetails = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="mt-8"
+                  className="mt-6 sm:mt-8"
                 >
                   <motion.button
                     whileHover={
@@ -499,7 +499,7 @@ const BookDetails = () => {
                     }
                     onClick={() => setShowBorrowModal(true)}
                     disabled={book.quantity <= 0 || !user || alreadyBorrowed}
-                    className={`w-full py-4 rounded-xl font-semibold text-lg transition-all ${
+                    className={`w-full py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-base sm:text-lg transition-all ${
                       book.quantity <= 0 || !user || alreadyBorrowed
                         ? theme === "dark"
                           ? "bg-gray-700 text-gray-400 cursor-not-allowed"
@@ -528,24 +528,24 @@ const BookDetails = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="mt-8 grid md:grid-cols-2 gap-8"
+          className="mt-6 sm:mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8"
         >
           {/* Similar Books Section */}
           <div
-            className={`rounded-2xl p-6 ${
+            className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 ${
               theme === "dark" ? "bg-gray-800" : "bg-white"
             } shadow-lg`}
           >
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-4 sm:mb-6">
               <h3
-                className={`text-xl font-bold ${
+                className={`text-lg sm:text-xl font-bold ${
                   theme === "dark" ? "text-white" : "text-gray-800"
                 }`}
               >
                 You Might Also Like
               </h3>
               <button
-                className={`flex items-center text-sm ${
+                className={`flex items-center text-xs sm:text-sm ${
                   theme === "dark" ? "text-purple-400" : "text-purple-600"
                 }`}
               >
@@ -554,15 +554,15 @@ const BookDetails = () => {
             </div>
 
             <div className="relative">
-              <div className="flex space-x-6 overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide">
+              <div className="flex space-x-4 sm:space-x-6 overflow-x-auto pb-4 -mx-2 px-2 scrollbar-hide">
                 {similarBooks.map((similarBook) => (
                   <motion.div
                     key={similarBook.id}
                     whileHover={{ y: -8 }}
-                    className="flex-shrink-0 w-48"
+                    className="flex-shrink-0 w-36 sm:w-48"
                   >
                     <div
-                      className={`relative rounded-xl overflow-hidden shadow-md cursor-pointer ${
+                      className={`relative rounded-lg sm:rounded-xl overflow-hidden shadow-md cursor-pointer ${
                         theme === "dark" ? "bg-gray-700" : "bg-gray-100"
                       }`}
                       onClick={() => navigate(`/books/${similarBook.id}`)}
@@ -570,11 +570,11 @@ const BookDetails = () => {
                       <img
                         src={similarBook.image}
                         alt={similarBook.title}
-                        className="w-full h-48 object-cover"
+                        className="w-full h-40 sm:h-48 object-cover"
                       />
-                      <div className="p-3">
+                      <div className="p-2 sm:p-3">
                         <h4
-                          className={`text-sm font-semibold mb-1 ${
+                          className={`text-xs sm:text-sm font-semibold mb-1 truncate ${
                             theme === "dark" ? "text-white" : "text-gray-800"
                           }`}
                         >
@@ -597,20 +597,20 @@ const BookDetails = () => {
 
           {/* Reviews Section */}
           <div
-            className={`rounded-2xl p-6 ${
+            className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 ${
               theme === "dark" ? "bg-gray-800" : "bg-white"
             } shadow-lg`}
           >
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-4 sm:mb-6">
               <h3
-                className={`text-xl font-bold ${
+                className={`text-lg sm:text-xl font-bold ${
                   theme === "dark" ? "text-white" : "text-gray-800"
                 }`}
               >
                 Reader Reviews
               </h3>
               <button
-                className={`flex items-center text-sm ${
+                className={`flex items-center text-xs sm:text-sm ${
                   theme === "dark" ? "text-purple-400" : "text-purple-600"
                 }`}
               >
@@ -618,14 +618,14 @@ const BookDetails = () => {
               </button>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {reviews.map((review) => (
                 <motion.div
                   key={review.id}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.1 * review.id }}
-                  className={`p-4 rounded-xl ${
+                  className={`p-3 sm:p-4 rounded-lg sm:rounded-xl ${
                     theme === "dark" ? "bg-gray-700/50" : "bg-gray-50"
                   }`}
                 >
@@ -633,13 +633,13 @@ const BookDetails = () => {
                     <img
                       src={review.avatar}
                       alt={review.user}
-                      className="w-10 h-10 rounded-full mr-3 object-cover"
+                      className="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-2 sm:mr-3 object-cover"
                     />
                     <div className="flex-1">
                       <div className="flex justify-between items-start">
                         <div>
                           <h4
-                            className={`font-medium ${
+                            className={`text-sm sm:text-base font-medium ${
                               theme === "dark"
                                 ? "text-gray-200"
                                 : "text-gray-700"
@@ -661,7 +661,7 @@ const BookDetails = () => {
                           {[...Array(5)].map((_, i) => (
                             <FiStar
                               key={i}
-                              className={`text-sm ${
+                              className={`text-xs sm:text-sm ${
                                 i < review.rating
                                   ? "text-yellow-400"
                                   : theme === "dark"
@@ -674,13 +674,13 @@ const BookDetails = () => {
                         </div>
                       </div>
                       <p
-                        className={`mt-2 text-sm ${
+                        className={`mt-1 sm:mt-2 text-xs sm:text-sm ${
                           theme === "dark" ? "text-gray-300" : "text-gray-600"
                         }`}
                       >
                         {review.comment}
                       </p>
-                      <div className="flex items-center mt-3">
+                      <div className="flex items-center mt-2 sm:mt-3">
                         <button
                           className={`flex items-center text-xs ${
                             theme === "dark"
@@ -701,11 +701,11 @@ const BookDetails = () => {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className={`w-full py-3 rounded-lg border-2 border-dashed ${
+                className={`w-full py-2 sm:py-3 rounded-lg border-2 border-dashed ${
                   theme === "dark"
                     ? "border-gray-600 hover:border-purple-500 text-gray-300"
                     : "border-gray-300 hover:border-purple-400 text-gray-600"
-                } transition-colors`}
+                } transition-colors text-sm sm:text-base`}
               >
                 + Add your review
               </motion.button>
@@ -719,13 +719,13 @@ const BookDetails = () => {
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        className={`fixed bottom-8 right-8 w-12 h-12 rounded-full flex items-center justify-center shadow-lg ${
+        className={`fixed bottom-6 right-6 sm:bottom-8 sm:right-8 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-lg ${
           theme === "dark"
             ? "bg-purple-600 text-white"
             : "bg-white text-purple-600"
         }`}
       >
-        <FiArrowLeft className="transform rotate-90" />
+        <FiArrowLeft className="transform rotate-90 text-sm sm:text-base" />
       </motion.button>
 
       {/* Borrow Modal */}
