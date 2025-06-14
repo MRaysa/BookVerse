@@ -72,7 +72,6 @@ const SignIn = () => {
 
       // Show themed success message
       await Swal.fire({
-        position: "top-end",
         icon: "success",
         title: "Signed in successfully",
         showConfirmButton: false,
