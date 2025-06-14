@@ -39,13 +39,22 @@ const Testimonials = () => {
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
         >
-          What Our{" "}
+          <span
+            className={` ${theme === "dark" ? "text-white" : " text-gray-800"}`}
+          >
+            {" "}
+            What Our {}
+          </span>
           <span
             className={theme === "dark" ? "text-teal-300" : "text-teal-600"}
           >
             Readers
           </span>{" "}
-          Say
+          <span
+            className={` ${theme === "dark" ? "text-white" : " text-gray-800"}`}
+          >
+            Say
+          </span>
         </motion.h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -68,7 +77,13 @@ const Testimonials = () => {
               >
                 <FaQuoteLeft />
               </div>
-              <p className="text-lg mb-6 italic">{testimonial.text}</p>
+              <p
+                className={`text-lg mb-6 italic${
+                  theme === "dark" ? "text-white" : " text-gray-800"
+                }`}
+              >
+                {testimonial.text}
+              </p>
               <div className="flex mb-2">
                 {[...Array(5)].map((_, i) => (
                   <FaStar

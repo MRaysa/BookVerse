@@ -52,7 +52,7 @@ const ReadingChallenge = () => {
             <FaBookReader />
           </motion.div>
           <h2 className="text-3xl font-bold mb-4">
-            Join Our <span className="text-primary">Reading Challenge</span>
+            <span className="text-primary"> Join Our Reading Challenge</span>
           </h2>
           <p
             className={`text-lg mb-6 ${
@@ -84,7 +84,13 @@ const ReadingChallenge = () => {
             }`}
           >
             <div className="flex justify-between mb-2">
-              <span className="font-medium">Your Progress</span>
+              <span
+                className={`font-medium ${
+                  theme === "dark" ? "text-white" : " text-gray-800"
+                }`}
+              >
+                Your Progress
+              </span>
               <span className="font-bold text-primary">65%</span>
             </div>
             <div
@@ -106,7 +112,13 @@ const ReadingChallenge = () => {
                   theme === "dark" ? "bg-primary" : "bg-primary"
                 }`}
               ></div>
-              <span>8 of 12 books completed</span>
+              <span
+                className={`font-medium ${
+                  theme === "dark" ? "text-white" : " text-gray-800"
+                }`}
+              >
+                8 of 12 books completed
+              </span>
             </div>
             <motion.div
               className="mt-6 grid grid-cols-4 gap-2"

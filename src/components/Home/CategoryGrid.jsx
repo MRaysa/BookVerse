@@ -53,7 +53,11 @@ const CategoryGrid = () => {
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
         >
-          Explore Our{" "}
+          <span
+            className={theme === "dark" ? "text-purple-400" : "text-purple-600"}
+          >
+            Explore Our
+          </span>{" "}
           <span
             className={theme === "dark" ? "text-purple-400" : "text-purple-600"}
           >
@@ -73,7 +77,7 @@ const CategoryGrid = () => {
               whileHover={{ y: -5 }}
               className={`p-6 rounded-xl shadow-md flex flex-col items-center ${
                 theme === "dark"
-                  ? "bg-gray-700 hover:bg-gray-600"
+                  ? "bg-gray-700 hover:bg-gray-600 text-white"
                   : "bg-white hover:bg-gray-100"
               } transition-all cursor-pointer`}
             >
