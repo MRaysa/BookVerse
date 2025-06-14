@@ -45,14 +45,14 @@ const UpdateBook = () => {
         const response = await api.get(`/api/books/${id}`);
         setBook(response.data.data);
 
-        // Set form values
-        setValue("title", response.data.data.name);
-        setValue("author", response.data.data.author);
-        setValue("category", response.data.data.category);
-        setValue("rating", response.data.data.rating);
-        setValue("quantity", response.data.data.quantity);
+        // Set form values with proper null checks
+        setValue("title", response.data.data.name || "");
+        setValue("author", response.data.data.author || "");
+        setValue("category", response.data.data.category || "Fiction");
+        setValue("rating", response.data.data.rating || 1);
+        setValue("quantity", response.data.data.quantity || 0);
         setValue("description", response.data.data.description || "");
-        setValue("imageUrl", response.data.data.image);
+        setValue("imageUrl", response.data.data.image || "");
 
         setLoading(false);
       } catch (err) {
@@ -69,26 +69,28 @@ const UpdateBook = () => {
       setIsSubmitting(true);
       setSubmitError(null);
 
-      // Get auth token from wherever you store it (localStorage, cookies, etc.)
+      // Debug: Log the form data before sending
+      console.log("Submitting form data:", data);
+
       const token = localStorage.getItem("token");
 
-      const response = await api.put(
-        `/api/books/${id}`,
-        {
-          name: data.title,
-          author: data.author,
-          category: data.category,
-          rating: data.rating,
-          quantity: data.quantity,
-          description: data.description,
-          image: data.imageUrl,
+      const updateData = {
+        name: data.title,
+        author: data.author,
+        category: data.category,
+        rating: parseFloat(data.rating),
+        quantity: parseInt(data.quantity),
+        description: data.description || null, // Explicitly handle empty description
+        image: data.imageUrl || null,
+      };
+
+      const response = await api.put(`/api/books/${id}`, updateData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      });
+
+      console.log("Update response:", response.data);
 
       if (response.data.success) {
         navigate(`/book-details/${id}`, {
@@ -406,8 +408,18 @@ const UpdateBook = () => {
                     : "focus:ring-purple-400"
                 }`}
                 rows="4"
-                {...register("description")}
+                {...register("description", {
+                  maxLength: {
+                    value: 2000,
+                    message: "Description cannot exceed 2000 characters",
+                  },
+                })}
               />
+              {errors.description && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.description.message}
+                </p>
+              )}
             </div>
 
             {/* Submit Button */}
