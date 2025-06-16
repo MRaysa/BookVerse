@@ -122,75 +122,108 @@ const SignUp = () => {
       throw error;
     }
   };
-
   const showSuccessAlert = (userProfile) => {
-    Swal.fire({
-      title: "Account Created Successfully!",
-      html: (
-        <div className="text-center">
-          <Lottie
-            animationData={successLottie}
-            loop={false}
-            style={{ height: 150, margin: "0 auto" }}
-          />
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.5 }}
-            className="mt-4"
-          >
-            <div className="flex justify-center mb-4">
-              <div className="p-3 bg-green-100 rounded-full">
-                <FaCheckCircle className="text-5xl text-green-500" />
-              </div>
-            </div>
-            <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-              Welcome, {userProfile.displayName || userProfile.name}!
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">
-              Your account has been successfully created.
-            </p>
+    // Create style element for animations
+    const style = document.createElement("style");
+    style.textContent = `
+      @keyframes pop-in {
+        0% { transform: scale(0.8); opacity: 0; }
+        80% { transform: scale(1.05); }
+        100% { transform: scale(1); opacity: 1; }
+      }
+      @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .swal2-popup-custom {
+        animation: pop-in 0.4s ease-out forwards !important;
+      }
+      .swal2-title-custom {
+        font-size: 1.5rem !important;
+        font-weight: bold !important;
+        color: #7c3aed !important;
+      }
+      .swal2-confirm-custom {
+        padding: 0.5rem 1rem !important;
+        border-radius: 0.5rem !important;
+      }
+    `;
+    document.head.appendChild(style);
 
-            <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 text-left max-w-md mx-auto">
-              <div className="flex items-center mb-2">
-                <span className="font-medium text-gray-700 dark:text-gray-300 w-24">
-                  Email:
-                </span>
-                <span className="text-gray-600 dark:text-gray-200">
-                  {userProfile.email}
-                </span>
-              </div>
-              {userProfile.phoneNumber && (
-                <div className="flex items-center mb-2">
-                  <span className="font-medium text-gray-700 dark:text-gray-300 w-24">
-                    Phone:
-                  </span>
-                  <span className="text-gray-600 dark:text-gray-200">
-                    {userProfile.phoneNumber}
-                  </span>
-                </div>
-              )}
-              {userProfile.address && (
-                <div className="flex items-start mb-2">
-                  <span className="font-medium text-gray-700 dark:text-gray-300 w-24">
-                    Address:
-                  </span>
-                  <span className="text-gray-600 dark:text-gray-200">
-                    {userProfile.address}
-                  </span>
-                </div>
-              )}
-            </div>
-          </motion.div>
+    Swal.fire({
+      title: "🎉 Account Created!",
+      html: `
+        <div style="text-align: center;">
+          <div style="
+            animation: bounce 1s infinite;
+            font-size: 2.25rem;
+            margin-bottom: 1rem;
+          ">👋</div>
+          <p style="font-size: 1.125rem; line-height: 1.75rem;">
+            Welcome, <strong style="color: #7c3aed;">${
+              userProfile.displayName || userProfile.name
+            }</strong>!
+          </p>
+          <p style="margin-bottom: 1rem;">Your account is ready to go!</p>
+          
+          <div style="
+            background-color: #eef2ff;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: left;
+            animation: fade-in 0.6s ease-out forwards;
+          ">
+            <p style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+              <span style="margin-right: 0.5rem; font-size: 1.2em;">📧</span>
+              <span><strong>Email:</strong> ${userProfile.email}</span>
+            </p>
+            ${
+              userProfile.phoneNumber
+                ? `<p style="display: flex; align-items: center; margin-bottom: 0.5rem;">
+                    <span style="margin-right: 0.5rem; font-size: 1.2em;">📱</span>
+                    <span><strong>Phone:</strong> ${userProfile.phoneNumber}</span>
+                  </p>`
+                : ""
+            }
+            ${
+              userProfile.address
+                ? `<p style="display: flex; align-items: center;">
+                    <span style="margin-right: 0.5rem; font-size: 1.2em;">🏠</span>
+                    <span><strong>Address:</strong> ${userProfile.address}</span>
+                  </p>`
+                : ""
+            }
+          </div>
         </div>
-      ),
+      `,
       showConfirmButton: true,
-      confirmButtonText: "Continue to Dashboard",
-      confirmButtonColor: "#10b981",
-      background: theme === "dark" ? "#1f2937" : "#ffffff",
+      confirmButtonText: "Let's Explore! 🚀",
+      confirmButtonColor: "#8b5cf6",
+      background: "#fff",
       customClass: {
-        popup: "rounded-xl",
-        title: "!text-2xl !font-bold !mb-4",
+        popup: "swal2-popup-custom",
+        title: "swal2-title-custom",
+        confirmButton: "swal2-confirm-custom",
+      },
+      didOpen: () => {
+        // Add some cute confetti when the alert opens
+        if (typeof window !== "undefined") {
+          import("canvas-confetti").then((confetti) => {
+            confetti.default({
+              particleCount: 100,
+              spread: 70,
+              origin: { y: 0.6 },
+            });
+          });
+        }
+      },
+      willClose: () => {
+        // Clean up the style element when alert closes
+        document.head.removeChild(style);
       },
     }).then(() => {
       navigate("/");
@@ -208,6 +241,7 @@ const SignUp = () => {
       );
       const user = userCredential.user;
 
+      // Create a clean user profile object
       const userProfile = {
         uid: user.uid,
         displayName: formData.name,
@@ -224,7 +258,9 @@ const SignUp = () => {
       });
 
       const dbResponse = await saveUserToDatabase(userProfile);
+
       if (dbResponse.insertedId) {
+        // Pass the properly formatted userProfile to the alert
         showSuccessAlert(userProfile);
       }
     } catch (error) {
