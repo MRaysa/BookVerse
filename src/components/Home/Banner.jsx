@@ -18,7 +18,8 @@ const Banner = () => {
       title: "Discover Your Next Adventure",
       subtitle: "Explore our vast collection of books",
       icon: <FaBookOpen className="text-5xl" />,
-      image: "https://i.ibb.co/HfJK11DV/banner1.png",
+      image:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR72_E1XDsFA579sB6NlAMHAJQcOmCot4DMoHioHeT5YDNvw3blnpGHxXhOGKB1P73rui0&usqp=CAU",
       overlay:
         theme === "dark" ? "rgba(76, 29, 149, 0.7)" : "rgba(109, 40, 217, 0.7)",
     },
@@ -26,7 +27,8 @@ const Banner = () => {
       title: "Find Your Perfect Read",
       subtitle: "Advanced search at your fingertips",
       icon: <FaSearch className="text-5xl" />,
-      image: "https://i.ibb.co/s904Y9vm/banner2.jpg",
+      image:
+        "https://assets.penguinrandomhouse.com/wp-content/uploads/2021/06/10164043/PRH-Backlist-Outdoors-ReadDown-Main_Site-KN-1200x628-04_25.jpg",
       overlay:
         theme === "dark" ? "rgba(30, 58, 138, 0.7)" : "rgba(37, 99, 235, 0.7)",
     },
@@ -34,7 +36,8 @@ const Banner = () => {
       title: "Borrow With Ease",
       subtitle: "Simple process for all members",
       icon: <FaBookOpen className="text-5xl" />,
-      image: "https://i.ibb.co/FkP21LSt/banner3.jpg",
+      image:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwcob_IynFmUEeGmWH1yDFoAZC0-eJ3CPz1fWG0NF4PdOkYSlo09yntvv8eWMUW4SJEL8&usqp=CAU",
       overlay:
         theme === "dark" ? "rgba(17, 94, 89, 0.7)" : "rgba(20, 184, 166, 0.7)",
     },
