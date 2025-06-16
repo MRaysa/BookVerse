@@ -1,11 +1,53 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "../../contexts/ThemeContext";
-import { FaGithub, FaLinkedin, FaTwitter, FaHeart } from "react-icons/fa";
+import {
+  FaGithub,
+  FaLinkedin,
+  FaTwitter,
+  FaHeart,
+  FaHome,
+  FaBook,
+  FaPlusCircle,
+  FaShoppingBasket,
+} from "react-icons/fa";
 import { FiMail } from "react-icons/fi";
 
 const Footer = () => {
   const { theme } = useTheme();
+
+  const navLinks = [
+    {
+      name: "Home",
+      path: "/",
+      icon: <FaHome className="text-lg" />,
+    },
+    {
+      name: "All Books",
+      path: "/all-books",
+      icon: <FaBook className="text-lg" />,
+    },
+    {
+      name: "Add Book",
+      path: "/add-book",
+      icon: <FaPlusCircle className="text-lg" />,
+    },
+    {
+      name: "Borrowed",
+      path: "/borrowed-books",
+      icon: <FaShoppingBasket className="text-lg" />,
+    },
+    {
+      name: "My All Books",
+      path: "/my-all-books",
+      icon: <FaBook className="text-lg" />,
+    },
+    {
+      name: "About Us",
+      path: "/aboutUs",
+      icon: <FaBook className="text-lg" />,
+    },
+  ];
 
   const socialLinks = [
     {
@@ -66,7 +108,7 @@ const Footer = () => {
       variants={footerVariants}
     >
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo and description */}
           <motion.div className="space-y-4" variants={itemVariants}>
             <motion.div
@@ -82,49 +124,82 @@ const Footer = () => {
             </motion.p>
           </motion.div>
 
+          {/* Navigation Links */}
+          <motion.div className="space-y-4" variants={itemVariants}>
+            <h3 className="text-lg font-semibold">Navigation</h3>
+            <motion.ul className="space-y-3">
+              {navLinks.map((link, index) => (
+                <motion.li
+                  key={index}
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="flex items-center gap-2"
+                >
+                  <span
+                    className={`${
+                      theme === "dark" ? "text-indigo-400" : "text-indigo-200"
+                    }`}
+                  >
+                    {link.icon}
+                  </span>
+                  <a
+                    href={link.path}
+                    className="text-sm hover:text-accent transition-colors"
+                  >
+                    {link.name}
+                  </a>
+                </motion.li>
+              ))}
+            </motion.ul>
+          </motion.div>
+
           {/* Quick links */}
           <motion.div className="space-y-4" variants={itemVariants}>
-            <h3 className="text-lg font-semibold">Quick Links</h3>
-            <motion.ul className="space-y-2">
-              {["Home", "All Books", "Add Book", "Borrowed Books"].map(
-                (link, index) => (
-                  <motion.li
-                    key={index}
-                    whileHover={{ x: 5 }}
-                    whileTap={{ scale: 0.95 }}
+            <h3 className="text-lg font-semibold">Quick Access</h3>
+            <motion.ul className="space-y-3">
+              {[
+                "Popular Books",
+                "New Arrivals",
+                "Featured Authors",
+                "Reading Lists",
+              ].map((link, index) => (
+                <motion.li
+                  key={index}
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <a
+                    href={`#${link.toLowerCase().replace(" ", "-")}`}
+                    className="text-sm hover:text-accent transition-colors"
                   >
-                    <a
-                      href={`#${link.toLowerCase().replace(" ", "-")}`}
-                      className="text-sm hover:text-accent transition-colors"
-                    >
-                      {link}
-                    </a>
-                  </motion.li>
-                )
-              )}
+                    {link}
+                  </a>
+                </motion.li>
+              ))}
             </motion.ul>
           </motion.div>
 
           {/* Social links */}
           <motion.div className="space-y-4" variants={itemVariants}>
             <h3 className="text-lg font-semibold">Connect With Us</h3>
-            <motion.div className="flex space-x-4">
+            <motion.div className="flex flex-wrap gap-3">
               {socialLinks.map((social, index) => (
                 <motion.a
                   key={index}
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`p-2 rounded-full ${
+                  className={`p-3 rounded-full flex items-center gap-2 ${
                     theme === "dark"
                       ? "bg-gray-800 hover:bg-gray-700"
-                      : "bg-white hover:bg-gray-200 text-indigo-500"
-                  } shadow-sm`}
-                  whileHover={{ y: -5, scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                      : "bg-white hover:bg-gray-100 text-indigo-600"
+                  } shadow-sm transition-all`}
+                  whileHover={{ y: -3, scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   aria-label={social.name}
                 >
                   {social.icon}
+                  <span className="text-sm">{social.name}</span>
                 </motion.a>
               ))}
             </motion.div>
@@ -141,7 +216,7 @@ const Footer = () => {
             Aysa Siddika Meem © {new Date().getFullYear()}
           </p>
           <motion.p className="mt-2" whileHover={{ scale: 1.02 }}>
-            All rights reserved
+            All rights reserved | Terms of Service | Privacy Policy
           </motion.p>
         </motion.div>
       </div>
