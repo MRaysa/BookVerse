@@ -1,12 +1,69 @@
-# React + Vite
+# 📚 BookVerse - Library Management System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 🌐 Live Site
 
-Currently, two official plugins are available:
+[🔗 Visit BookVerse](https://book-verse-hazel.vercel.app/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 🧩 Project Overview
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+**BookVerse** is a full-stack library management web application. It enables users to browse, add, borrow, and return books efficiently. The system supports protected routes, JWT authentication, user-specific borrowing limits, and a responsive, animated interface to enhance the user experience.
+
+---
+
+## 🎯 Purpose
+
+To create a functional, secure, and engaging Library Management System that simplifies book tracking and enhances the digital library experience for both users and administrators.
+
+---
+
+## ✨ Key Features
+
+- 🔐 **Authentication & Authorization**
+
+  - Email/Password login & registration
+  - Google login
+  - JWT protection on private routes
+
+- 📚 **Books Management**
+
+  - Add, view, update, and borrow books
+  - Filter available books
+  - Card & Table view toggle
+
+- 📊 **User Dashboard**
+
+  - Track borrowed books
+  - Reading progress challenge
+
+- 💡 **UX/UI Enhancements**
+
+  - Fully responsive design
+  - Framer Motion animations
+  - Swiper.js slider
+  - Toast/SweetAlert notifications
+
+- 🚫 **Borrowing Rules**
+  - Max 3 books per user
+  - No duplicate borrow
+  - Disable borrow when quantity = 0
+
+---
+
+## 🧪 Tech Stack
+
+| Category    | Tools Used                                             |
+| ----------- | ------------------------------------------------------ |
+| Frontend    | React, Tailwind CSS, React Router, Axios               |
+| Backend     | Express.js, MongoDB (without Mongoose)                 |
+| Auth        | Firebase Authentication                                |
+| UI Features | Swiper.js, Framer Motion, React Rating Stars, Toastify |
+| Forms       | React Hook Form                                        |
+| Deployment  | Vercel (client), Render (server)                       |
+
+---
+
+## 📁 Project Structure
+
+### 📦 Client
