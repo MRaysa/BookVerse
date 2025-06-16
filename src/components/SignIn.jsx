@@ -43,6 +43,12 @@ const SignIn = () => {
     setLoading(true);
 
     try {
+      // First validate the inputs
+      if (!email || !password) {
+        throw new Error("Please fill in all fields");
+      }
+
+      // Attempt sign-in
       const result = await signInWithEmailAndPassword(auth, email, password);
       const user = result.user;
 
@@ -54,23 +60,27 @@ const SignIn = () => {
       };
 
       // Update last sign-in time in database
-      const updateResponse = await fetch(
-        "https://book-verse-server-sigma.vercel.app/users",
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(signInInfo),
-        }
-      );
+      try {
+        const updateResponse = await fetch(
+          "https://book-verse-server-sigma.vercel.app/users",
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(signInInfo),
+          }
+        );
 
-      if (!updateResponse.ok) {
-        const errorData = await updateResponse.json();
-        throw new Error(errorData.error || "Failed to update sign-in time");
+        if (!updateResponse.ok) {
+          throw new Error("Failed to update sign-in time");
+        }
+      } catch (dbError) {
+        console.error("Database update error:", dbError);
+        // Continue with login even if database update fails
       }
 
-      // Show themed success message
+      // Show success message
       await Swal.fire({
         icon: "success",
         title: "Signed in successfully",
@@ -80,24 +90,61 @@ const SignIn = () => {
         color: theme === "dark" ? "#ffffff" : "#1f2937",
       });
 
-      navigate(location?.state?.from || "/");
+      navigate(location?.state || "/");
     } catch (error) {
       console.error("Sign-in error:", error);
-      setError(error.message);
 
-      let errorMessage = error.message;
-      if (error.code === "auth/wrong-password") {
-        errorMessage = "Incorrect password";
-      } else if (error.code === "auth/user-not-found") {
-        errorMessage = "User not found";
+      let errorMessage = "Sign-in failed. Please try again.";
+      if (error.code) {
+        switch (error.code) {
+          case "auth/wrong-password":
+            errorMessage = "Incorrect password";
+            break;
+          case "auth/user-not-found":
+            errorMessage = "No account found with this email";
+            break;
+          case "auth/too-many-requests":
+            errorMessage =
+              "Too many attempts. Try again later or reset your password";
+            break;
+          case "auth/invalid-email":
+            errorMessage = "Invalid email address";
+            break;
+          default:
+            errorMessage = error.message;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
       }
+
+      setError(errorMessage);
 
       await Swal.fire({
         icon: "error",
         title: "Sign-in Failed",
-        text: errorMessage,
+        html: `
+          <div style="text-align: center;">
+            <p style="margin-bottom: 1rem;">${errorMessage}</p>
+            ${
+              error.code === "auth/wrong-password" ||
+              error.code === "auth/user-not-found"
+                ? '<button id="resetPassword" style="margin-top: 1rem; padding: 0.5rem 1rem; background-color: #8b5cf6; color: white; border: none; border-radius: 0.5rem; cursor: pointer;">Reset Password</button>'
+                : ""
+            }
+          </div>
+        `,
         background: theme === "dark" ? "#1f2937" : "#ffffff",
         color: theme === "dark" ? "#ffffff" : "#1f2937",
+        showConfirmButton: false,
+        didOpen: () => {
+          const resetBtn = document.getElementById("resetPassword");
+          if (resetBtn) {
+            resetBtn.addEventListener("click", () => {
+              Swal.close();
+              handleForgetPassword();
+            });
+          }
+        },
       });
     } finally {
       setLoading(false);
@@ -131,7 +178,7 @@ const SignIn = () => {
       }
 
       await Swal.fire({
-        position: "top-end",
+        // position: "top-end",
         icon: "success",
         title: "Signed in with Google",
         showConfirmButton: false,
