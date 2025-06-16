@@ -18,8 +18,7 @@ const Banner = () => {
       title: "Discover Your Next Adventure",
       subtitle: "Explore our vast collection of books",
       icon: <FaBookOpen className="text-5xl" />,
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR72_E1XDsFA579sB6NlAMHAJQcOmCot4DMoHioHeT5YDNvw3blnpGHxXhOGKB1P73rui0&usqp=CAU",
+      image: "https://d1ysvut1l4lkly.cloudfront.net/B09B7Y5G7P/6/image-0-0.jpg",
       overlay:
         theme === "dark" ? "rgba(76, 29, 149, 0.7)" : "rgba(109, 40, 217, 0.7)",
     },
