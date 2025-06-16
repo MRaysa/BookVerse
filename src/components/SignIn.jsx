@@ -153,51 +153,139 @@ const SignIn = () => {
 
   const handleGoogleLogin = async () => {
     try {
+      setLoading(true);
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
 
-      const updateResponse = await fetch(
-        "https://book-verse-server-sigma.vercel.app/users",
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            uid: user.uid,
-            email: user.email,
-            lastSignInTime: user.metadata.lastSignInTime,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-          }),
-        }
-      );
+      // Prepare user data for backend
+      const userData = {
+        uid: user.uid,
+        email: user.email,
+        lastSignInTime: user.metadata.lastSignInTime,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+      };
 
-      if (!updateResponse.ok) {
-        throw new Error("Failed to update Google sign-in info");
+      // Try to update user info in backend
+      try {
+        const updateResponse = await fetch(
+          "https://book-verse-server-sigma.vercel.app/users",
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userData),
+          }
+        );
+
+        if (!updateResponse.ok) {
+          const errorData = await updateResponse.json();
+          console.warn(
+            "Backend update warning:",
+            errorData.message || "Update failed but user is logged in"
+          );
+        }
+      } catch (dbError) {
+        console.warn("Database update error:", dbError);
+        // Continue with login even if database update fails
       }
 
+      // Show success message with animation
       await Swal.fire({
-        // position: "top-end",
-        icon: "success",
-        title: "Signed in with Google",
+        title: '<span style="font-size: 1.5rem">🎉 Welcome!</span>',
+        html: `
+          <div style="text-align: center; margin-top: 1rem;">
+            <lottie-player 
+              src="https://assets1.lottiefiles.com/packages/lf20_zkjfhrjt.json" 
+              background="transparent" 
+              speed="1" 
+              style="width: 150px; height: 150px; margin: 0 auto;" 
+              autoplay>
+            </lottie-player>
+            <p style="margin-top: 1rem; font-size: 1.1rem;">
+              Signed in with Google as <strong>${
+                user.displayName || user.email
+              }</strong>
+            </p>
+          </div>
+        `,
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
         background: theme === "dark" ? "#1f2937" : "#ffffff",
         color: theme === "dark" ? "#ffffff" : "#1f2937",
+        willOpen: () => {
+          const script = document.createElement("script");
+          script.src =
+            "https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js";
+          document.head.appendChild(script);
+        },
       });
 
-      navigate("/");
+      navigate(location?.state || "/");
     } catch (error) {
       console.error("Google sign-in error:", error);
-      setError(error.message);
+      setLoading(false);
 
+      let errorMessage = "Google sign-in failed. Please try again.";
+      if (error.code === "auth/popup-closed-by-user") {
+        errorMessage = "You closed the sign-in window. Please try again.";
+      } else if (error.code === "auth/network-request-failed") {
+        errorMessage = "Network error. Please check your internet connection.";
+      } else if (error.message.includes("Failed to fetch")) {
+        errorMessage = "Connection to server failed. Please try again later.";
+      }
+
+      // Show error message with animation
       await Swal.fire({
-        icon: "error",
-        title: "Google Sign-in Failed",
-        text: error.message,
+        title:
+          '<span style="font-size: 1.5rem">😕 Google Sign-in Failed</span>',
+        html: `
+          <div style="text-align: center;">
+            <lottie-player 
+              src="https://assets1.lottiefiles.com/packages/lf20_gn0to3lr.json" 
+              background="transparent" 
+              speed="1" 
+              style="width: 120px; height: 120px; margin: 0 auto;" 
+              autoplay>
+            </lottie-player>
+            <p style="margin: 1rem 0; font-size: 1.1rem;">${errorMessage}</p>
+            <button id="tryAgain" style="
+              margin-top: 0.5rem;
+              padding: 0.5rem 1.5rem;
+              background: linear-gradient(135deg, #8b5cf6, #6366f1);
+              color: white;
+              border: none;
+              border-radius: 50px;
+              cursor: pointer;
+              font-weight: 500;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+              transition: all 0.3s ease;
+            ">
+              Try Again
+            </button>
+          </div>
+        `,
         background: theme === "dark" ? "#1f2937" : "#ffffff",
         color: theme === "dark" ? "#ffffff" : "#1f2937",
+        showConfirmButton: false,
+        willOpen: () => {
+          if (!document.querySelector('script[src*="lottie-player"]')) {
+            const script = document.createElement("script");
+            script.src =
+              "https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js";
+            document.head.appendChild(script);
+          }
+        },
+        didOpen: () => {
+          const tryAgainBtn = document.getElementById("tryAgain");
+          if (tryAgainBtn) {
+            tryAgainBtn.addEventListener("click", () => {
+              Swal.close();
+              handleGoogleLogin();
+            });
+          }
+        },
       });
     }
   };
